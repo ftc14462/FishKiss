@@ -8,9 +8,9 @@ public class Category {
 
 	public static String getCategory(String description) {
 		String[] split = description.split(" ");
-		String short_description = split[split.length - 1]; //last word of description
-		if(description.contains("x")) {
-			short_description="Art";
+		String short_description = split[split.length - 1]; // last word of description
+		if (description.contains("x")) {
+			short_description = "Art";
 		}
 		if (hashmap == null) {
 			hashmap = new HashMap<>();
