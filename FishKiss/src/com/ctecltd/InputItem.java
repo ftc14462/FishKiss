@@ -34,6 +34,7 @@ public class InputItem {
 		String description = nameSplit[nameSplit.length - 1];
 
 		if (description.equals("Map") || description.equals("Art")) {
+			variations = variations.replace("&quot;", "");
 			String size = variations.substring(5, 10);
 			description = size + " Poster";
 			nameSplit = name.split(",");
@@ -47,6 +48,8 @@ public class InputItem {
 		}
 
 		if (description.equals("Canvas")) {
+			variations = variations.replace("&quot;", "");
+			variations = variations.replace(" ", "");
 			String size = variations.substring(5, 10);
 			description = size + " Canvas";
 		}

@@ -8,7 +8,7 @@ public class Category {
 
 	public static String getCategory(String description) {
 		String[] split = description.split(" ");
-		String short_description = split[split.length - 1]; // last word of description
+		String short_description = split[split.length - 1]; // last word of description		
 		if (description.contains("x")) {
 			short_description = "Art";
 		}
