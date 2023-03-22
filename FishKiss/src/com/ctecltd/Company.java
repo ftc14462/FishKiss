@@ -30,7 +30,7 @@ public class Company {
 //		String category="Not found";
 		String company = hashmap.get(short_description);
 		if (company == null) {
-			company = "Not found";
+			company = "No Company Match For: " + short_description;
 		}
 		return company;
 	}
