@@ -29,47 +29,58 @@ public class InputItem {
 		return state;
 	}
 
-	public String getDescription() {
-		String[] nameSplit = name.split(",")[0].split(" ");
-		String description = nameSplit[nameSplit.length - 1];
+	public String getDescription() throws BadItemNameException {
+		String description = "";
+		try {
+			String[] nameSplit = name.split(",")[0].split(" ");
+			description = nameSplit[nameSplit.length - 1];
 
-		if (description.equals("Map") || description.equals("Art")) {
-			variations = variations.replace("&quot;", "");
-			String size = variations.substring(5, 10);
-			description = size + " Poster";
-			nameSplit = name.split(",");
-			String last = nameSplit[nameSplit.length - 1];
-			if (last.contains("Printed on watercolor paper")) {
-				description = size;
+			if (description.equals("Map") || description.equals("Art")) {
+				variations = variations.replace("&quot;", "");
+				String size = "Size Not Found";
+				if (variations.length() > 9) {
+					size = variations.substring(5, 10);
+				}
+				description = size + " Poster";
+				nameSplit = name.split(",");
+				String last = nameSplit[nameSplit.length - 1];
+				if (last.contains("Printed on watercolor paper")) {
+					description = size;
+				}
+				if (size.equals("Greet")) {
+					description = "Greeting Card";
+				}
 			}
-			if (size.equals("Greet")) {
-				description = "Greeting Card";
-			}
-		}
 
-		if (description.equals("Canvas")) {
-			variations = variations.replace("&quot;", "");
-			variations = variations.replace(" ", "");
-			String size = variations.substring(5, 10);
-			description = size + " Canvas";
-		}
-
-		if (description.equals("Pillow")) {
-			if (variations.contains("Cover Only")) {
-				description = "Pillow Cover";
+			if (description.equals("Canvas")) {
+				variations = variations.replace("&quot;", "");
+				variations = variations.replace(" ", "");
+				String size = "Size Not Found";
+				if (variations.length() > 9) {
+					size = variations.substring(5, 10);
+				}
+				description = size + " Canvas";
 			}
+
+			if (description.equals("Pillow")) {
+				if (variations.contains("Cover Only")) {
+					description = "Pillow Cover";
+				}
+			}
+		} catch (Exception e) {
+			throw new BadItemNameException(e, name);
 		}
 
 		return description;
 	}
 
-	public String getCategory() {
+	public String getCategory() throws BadItemNameException {
 //		String[] nameSplit = name.split(",")[0].split(" ");
 //		String raw_description = nameSplit[nameSplit.length - 1];
 		return Category.getCategory(getDescription());
 	}
 
-	public String getCompany() {
+	public String getCompany() throws BadItemNameException {
 		return Company.getCompany(getDescription());
 	}
 
