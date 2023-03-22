@@ -17,9 +17,11 @@ import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -39,6 +41,7 @@ public class FishKissFileConverter {
 	protected static File outputFile;
 	protected static boolean outputSelected;
 	private static ArrayList<InputItem> inputItems;
+	private static JComboBox inputFileTypeComboBox;
 
 	public static void main(String[] args) {
 		JFrame fkwindow = new JFrame("Fish Kiss File Converter");
@@ -48,15 +51,18 @@ public class FishKissFileConverter {
 		fc = new JFileChooser();
 
 		JPanel inputPanel = new JPanel();
-//		inputPanel.setBackground(Color.green);
 		inputPanel.setLayout(new BorderLayout());
-		inputPanel.add(new JLabel("Input File:"), BorderLayout.WEST);
+
+		JPanel inputFilenamePanel = new JPanel();
+//		inputPanel.setBackground(Color.green);
+		inputFilenamePanel.setLayout(new BorderLayout());
+		inputFilenamePanel.add(new JLabel("Input File:"), BorderLayout.WEST);
 		inputTextField = new JTextField();
 //		inputTextField.setMinimumSize(new Dimension(300, 10));
 		inputTextField.setText("input filename");
-		inputPanel.add(inputTextField, BorderLayout.CENTER);
+		inputFilenamePanel.add(inputTextField, BorderLayout.CENTER);
 		inputBrowseButton = new JButton("Input...", createImageIcon("images/Open16.gif"));
-		inputPanel.add(inputBrowseButton, BorderLayout.EAST);
+		inputFilenamePanel.add(inputBrowseButton, BorderLayout.EAST);
 
 		inputBrowseButton.addActionListener(new ActionListener() {
 			@Override
@@ -71,6 +77,15 @@ public class FishKissFileConverter {
 			}
 		});
 
+		JPanel inputFileTypePanel = new JPanel();
+		inputFileTypePanel.add(new JLabel("Input File Type: "));
+		String[] inputFileTypeStrings = { "CSV From Etsy" };
+		inputFileTypeComboBox = new JComboBox<>(inputFileTypeStrings);
+		inputFileTypePanel.add(inputFileTypeComboBox);
+		
+		inputPanel.add(inputFileTypePanel,BorderLayout.NORTH);
+		inputPanel.add(inputFilenamePanel,BorderLayout.SOUTH);		
+		
 		JPanel outputPanel = new JPanel();
 		outputPanel.setLayout(new BorderLayout());
 		outputPanel.add(new JLabel("Output File:"), BorderLayout.WEST);
@@ -102,9 +117,16 @@ public class FishKissFileConverter {
 		okPanel.add(okButton);
 		okButton.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				readInputFile();
-				writeOutputFile();
+			public void actionPerformed(ActionEvent ae) {
+				try {
+					readInputFile();
+					writeOutputFile();
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(fkwindow, "Error: " + e.getMessage(), "CSV Conversion Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+				JOptionPane.showMessageDialog(fkwindow, "Succesfully wrote output file: " + outputFile.getName(),
+						"CSV Conversion Success", JOptionPane.PLAIN_MESSAGE);
 			}
 		});
 
@@ -116,7 +138,7 @@ public class FishKissFileConverter {
 		fkwindow.setVisible(true);
 	}
 
-	protected static void writeOutputFile() {
+	protected static void writeOutputFile() throws BadItemNameException {
 		try {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile));
 
