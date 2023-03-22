@@ -8,7 +8,7 @@ public class Category {
 
 	public static String getCategory(String description) {
 		String[] split = description.split(" ");
-		String short_description = split[split.length - 1]; // last word of description		
+		String short_description = split[split.length - 1]; // last word of description
 		if (description.contains("x")) {
 			short_description = "Art";
 		}
@@ -30,7 +30,7 @@ public class Category {
 //		String category="Not found";
 		String category = hashmap.get(short_description);
 		if (category == null) {
-			category = "Not found";
+			category = "No Category Match For: " + short_description;
 		}
 		return category;
 	}
