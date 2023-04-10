@@ -3,6 +3,7 @@ package com.ctecltd;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FileDialog;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -67,10 +68,20 @@ public class FishKissFileConverter {
 		inputBrowseButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				int returnVal = fc.showOpenDialog(fkwindow);
-				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					inputFile = fc.getSelectedFile();
-					inputTextField.setText(inputFile.toString());
+//				int returnVal = fc.showOpenDialog(fkwindow);
+//				if (returnVal == JFileChooser.APPROVE_OPTION) {
+//					inputFile = fc.getSelectedFile();
+//					inputTextField.setText(inputFile.toString());
+//					inputSelected = true;
+//					checkOK();
+//				}
+				FileDialog fd = new FileDialog(fkwindow, "Choose input", FileDialog.LOAD);
+				fd.setVisible(true);
+				String filename = fd.getFile();
+				String dirString = fd.getDirectory();
+				if (filename != null) {
+					inputTextField.setText(dirString + filename);
+					inputFile = new File(dirString + filename);
 					inputSelected = true;
 					checkOK();
 				}
@@ -82,10 +93,10 @@ public class FishKissFileConverter {
 		String[] inputFileTypeStrings = { "CSV From Etsy" };
 		inputFileTypeComboBox = new JComboBox<>(inputFileTypeStrings);
 		inputFileTypePanel.add(inputFileTypeComboBox);
-		
-		inputPanel.add(inputFileTypePanel,BorderLayout.NORTH);
-		inputPanel.add(inputFilenamePanel,BorderLayout.SOUTH);		
-		
+
+		inputPanel.add(inputFileTypePanel, BorderLayout.NORTH);
+		inputPanel.add(inputFilenamePanel, BorderLayout.SOUTH);
+
 		JPanel outputPanel = new JPanel();
 		outputPanel.setLayout(new BorderLayout());
 		outputPanel.add(new JLabel("Output File:"), BorderLayout.WEST);
@@ -99,14 +110,23 @@ public class FishKissFileConverter {
 		outputBrowseButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				int returnVal = fc.showSaveDialog(fkwindow);
-				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					outputFile = fc.getSelectedFile();
-					outputTextField.setText(outputFile.toString());
+//				int returnVal = fc.showSaveDialog(fkwindow);
+//				if (returnVal == JFileChooser.APPROVE_OPTION) {
+//					outputFile = fc.getSelectedFile();
+//					outputTextField.setText(outputFile.toString());
+//					outputSelected = true;
+//					checkOK();
+//				}
+				FileDialog fd = new FileDialog(fkwindow, "Choose output", FileDialog.SAVE);
+				fd.setVisible(true);
+				String filename = fd.getFile();
+				String dirnameString = fd.getDirectory();
+				if (filename != null) {
+					outputTextField.setText(dirnameString + filename);
+					outputFile = new File(dirnameString + filename);
 					outputSelected = true;
 					checkOK();
 				}
-
 			}
 
 		});
