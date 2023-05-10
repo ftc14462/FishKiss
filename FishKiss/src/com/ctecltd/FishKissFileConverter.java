@@ -120,6 +120,9 @@ public class FishKissFileConverter {
 				FileDialog fd = new FileDialog(fkwindow, "Choose output", FileDialog.SAVE);
 				fd.setVisible(true);
 				String filename = fd.getFile();
+				if (!filename.contains(".csv")) {
+					filename=filename+".csv";
+				}				
 				String dirnameString = fd.getDirectory();
 				if (filename != null) {
 					outputTextField.setText(dirnameString + filename);
