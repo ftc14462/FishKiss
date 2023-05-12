@@ -121,8 +121,8 @@ public class FishKissFileConverter {
 				fd.setVisible(true);
 				String filename = fd.getFile();
 				if (!filename.contains(".csv")) {
-					filename=filename+".csv";
-				}				
+					filename = filename + ".csv";
+				}
 				String dirnameString = fd.getDirectory();
 				if (filename != null) {
 					outputTextField.setText(dirnameString + filename);
@@ -165,13 +165,15 @@ public class FishKissFileConverter {
 		try {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile));
 
-			writer.write("Sale Date,Item Name,Quantity,Description,Category,Company,Blank1,Blank2,Blank3,Item Total\n");
+			writer.write(
+					"Sale Date,Item Name,SKU,Quantity,Description,Category,Company,Discount Amount,Blank1,Blank2,Item Total\n");
 
 			for (InputItem item : inputItems) {
 				String line = "";
 				line += item.date + ",";
 				String state = item.getState();
 				line += state + ",";
+				line += item.getSku() + ",";
 				line += item.quantity + ",";
 				String description = item.getDescription();
 				line += description + ",";
@@ -179,7 +181,8 @@ public class FishKissFileConverter {
 				line += category + ",";
 				String company = item.getCompany();
 				line += company + ",";
-				line += ",,,";
+				line += item.getDiscountAmount() + ",";
+				line += ",,";
 				line += item.total + "\n";
 				writer.write(line);
 			}
@@ -198,13 +201,7 @@ public class FishKissFileConverter {
 			inputItems = new ArrayList<InputItem>();
 			final CSVParser parser = new CSVParser(reader, CSVFormat.EXCEL.withHeader());
 			for (final CSVRecord record : parser) {
-				InputItem ii = new InputItem();
-				ii.date = record.get("Sale Date");
-				ii.name = record.get("Item Name");
-				ii.quantity = record.get("Quantity");
-				ii.total = record.get("Item Total");
-				ii.variations = record.get("Variations");
-				ii.sku = record.get("SKU");
+				InputItem ii = new EtsyInputItem(record);
 				inputItems.add(ii);
 			}
 			parser.close();
