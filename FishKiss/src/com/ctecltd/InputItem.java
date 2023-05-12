@@ -1,5 +1,8 @@
 package com.ctecltd;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class InputItem {
 
 	public String date;
@@ -8,24 +11,67 @@ public class InputItem {
 	public String total;
 	public String sku;
 	public String variations;
+	public String discountAmount;
+	public String status;
+
+	Map<String, String> statesMap = new HashMap<>();
+	{
+		statesMap.put("AL", "Alabama");
+		statesMap.put("AK", "Alaska");
+		statesMap.put("AR", "Arkansas");
+		statesMap.put("AZ", "Arizona");
+		statesMap.put("CA", "California");
+		statesMap.put("CO", "Colorado");
+		statesMap.put("CT", "Connecticut");
+		statesMap.put("DE", "Delaware");
+		statesMap.put("FL", "Florida");
+		statesMap.put("GA", "Georgia");
+		statesMap.put("HI", "Hawaii");
+		statesMap.put("IN", "Indiana");
+		statesMap.put("IA", "Iowa");
+		statesMap.put("ID", "Idaho");
+		statesMap.put("IL", "Illinois");
+		statesMap.put("KY", "Kentucky");
+		statesMap.put("KS", "Kansas");
+		statesMap.put("LA", "Louisiana");
+		statesMap.put("ME", "Maine");
+		statesMap.put("MD", "Maryland");
+		statesMap.put("MA", "Massachusetts");
+		statesMap.put("MI", "Michigan");
+		statesMap.put("MN", "Minnesota");
+		statesMap.put("MS", "Mississippi");
+		statesMap.put("MO", "Missouri");		
+		statesMap.put("MT", "Montana");
+		statesMap.put("NE", "Nebraska");
+		statesMap.put("NV", "Nevada");
+		statesMap.put("NH", "New Hampshire");		
+		statesMap.put("NJ", "New Jersey");
+		statesMap.put("NM", "New Mexico");		
+		statesMap.put("NY", "New York");
+		statesMap.put("NC", "North Carolina");
+		statesMap.put("ND", "North Dakota");		
+		statesMap.put("OR", "Oregon");
+		statesMap.put("OH", "Ohio");
+		statesMap.put("OK", "Oklahoma");
+		statesMap.put("PA", "Pennsylvania");
+		statesMap.put("RI", "Rhode Island");
+		statesMap.put("SD", "South Dakota");
+		statesMap.put("SC", "South Carolina");
+		statesMap.put("TX", "Texas");
+		statesMap.put("TN", "Tennesee");
+		statesMap.put("UT", "Utah");
+		statesMap.put("VA", "Virginia");
+		statesMap.put("VT", "Vermont");
+		statesMap.put("WV", "West Virginia");
+		statesMap.put("WA", "Washington");
+		statesMap.put("WI", "Wisconsin");
+		statesMap.put("WY", "Wyoming");
+	}
 
 	public String getState() {
-		String[] nameSplit = name.split(" ");
-		String state = nameSplit[0];
-		int index = 0;
-		if (state.equals("Custom")) {
-			state = nameSplit[1];
-			index = 1;
-		}
-		if (state.equals("New") || state.equals("Rhode") || state.equals("North") || state.equals("South")
-				|| state.equals("West")) {
-			state += " " + nameSplit[index + 1];
-		}
-		if (state.equals("Washington")) {
-			if (nameSplit[index + 1].contains("D.C") || nameSplit[index + 1].contains("DC")) {
-				state = "Washington D.C.";
-			}
-		}
+		String state = sku.replace("CUS-", "");
+		state = state.substring(0, 1);
+
 		return state;
 	}
 
@@ -82,6 +128,14 @@ public class InputItem {
 
 	public String getCompany() throws BadItemNameException {
 		return Company.getCompany(getDescription());
+	}
+
+	public String getDiscountAmount() {
+		return discountAmount;
+	}
+
+	public String getSku() {
+		return sku;
 	}
 
 }
