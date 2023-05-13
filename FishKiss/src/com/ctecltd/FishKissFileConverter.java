@@ -238,7 +238,7 @@ public class FishKissFileConverter {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile));
 
 			writer.write(
-					"Sale Date,Item Name,SKU,Quantity,Description,Category,Company,Discount Amount,Blank1,Blank2,Item Total\n");
+					"Sale Date,Item Name,SKU,Quantity,Description,Category,Company,Discount Amount,Blank1,Blank2,Item Total,,Original Name\n");
 
 			for (InputItem item : inputItems) {
 				String line = "";
@@ -255,7 +255,8 @@ public class FishKissFileConverter {
 				line += company + ",";
 				line += item.getDiscountAmount() + ",";
 				line += ",,";
-				line += item.total + "\n";
+				line += item.total + ",,";
+				line += "\"" + item.name + "\"\n";
 				writer.write(line);
 			}
 			writer.close();
