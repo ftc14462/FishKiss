@@ -12,9 +12,11 @@ public class EtsyInputItem extends InputItem {
 		this.variations = record.get("Variations");
 		this.sku = record.get("SKU");
 		this.discountAmount = record.get("Discount Amount");
+		String[] nameSplit = name.split(",")[0].split(" ");
+		this.keyWord = nameSplit[nameSplit.length - 1];
 	}
-	
-	public String getState(){
+
+	public String getState() {
 		String[] nameSplit = name.split(" ");
 		String state = nameSplit[0];
 		int index = 0;

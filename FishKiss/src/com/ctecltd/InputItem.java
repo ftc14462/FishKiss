@@ -13,6 +13,7 @@ public class InputItem {
 	public String variations;
 	public String discountAmount;
 	public String status;
+	public String keyWord;
 
 	Map<String, String> statesMap = new HashMap<>();
 	{
@@ -40,16 +41,16 @@ public class InputItem {
 		statesMap.put("MI", "Michigan");
 		statesMap.put("MN", "Minnesota");
 		statesMap.put("MS", "Mississippi");
-		statesMap.put("MO", "Missouri");		
+		statesMap.put("MO", "Missouri");
 		statesMap.put("MT", "Montana");
 		statesMap.put("NE", "Nebraska");
 		statesMap.put("NV", "Nevada");
-		statesMap.put("NH", "New Hampshire");		
+		statesMap.put("NH", "New Hampshire");
 		statesMap.put("NJ", "New Jersey");
-		statesMap.put("NM", "New Mexico");		
+		statesMap.put("NM", "New Mexico");
 		statesMap.put("NY", "New York");
 		statesMap.put("NC", "North Carolina");
-		statesMap.put("ND", "North Dakota");		
+		statesMap.put("ND", "North Dakota");
 		statesMap.put("OR", "Oregon");
 		statesMap.put("OH", "Ohio");
 		statesMap.put("OK", "Oklahoma");
@@ -66,46 +67,27 @@ public class InputItem {
 		statesMap.put("WA", "Washington");
 		statesMap.put("WI", "Wisconsin");
 		statesMap.put("WY", "Wyoming");
+		statesMap.put("DC", "Washington D.C.");
+		statesMap.put("NYC", "New York City");
+		statesMap.put("BI", "Block Island");
+		statesMap.put("WH", "Watch Hill");
 	}
 
 	public String getState() {
 		String state = sku.replace("CUS-", "");
-		state = state.substring(0, 1);
+		state = state.substring(0, 2);
+
+		state = statesMap.get(state);
 
 		return state;
 	}
 
 	public String getDescription() throws BadItemNameException {
-		String description = "";
+		String description = keyWord;
 		try {
-			String[] nameSplit = name.split(",")[0].split(" ");
-			description = nameSplit[nameSplit.length - 1];
 
-			if (description.equals("Map") || description.equals("Art")) {
-				variations = variations.replace("&quot;", "");
-				String size = "Size Not Found";
-				if (variations.length() > 9) {
-					size = variations.substring(5, 10);
-				}
-				description = size + " Poster";
-				nameSplit = name.split(",");
-				String last = nameSplit[nameSplit.length - 1];
-				if (last.contains("Printed on watercolor paper")) {
-					description = size;
-				}
-				if (size.equals("Greet")) {
-					description = "Greeting Card";
-				}
-			}
-
-			if (description.equals("Canvas")) {
-				variations = variations.replace("&quot;", "");
-				variations = variations.replace(" ", "");
-				String size = "Size Not Found";
-				if (variations.length() > 9) {
-					size = variations.substring(5, 10);
-				}
-				description = size + " Canvas";
+			if (isArtItem()) {
+				description = getArtDescription();
 			}
 
 			if (description.equals("Pillow")) {
@@ -118,6 +100,48 @@ public class InputItem {
 		}
 
 		return description;
+	}
+
+	public String getArtDescription() {
+		String description = keyWord;
+		if (description.equals("Map") || description.equals("Art")) {
+			variations = variations.replace("&quot;", "");
+			String size = getPosterSize();
+			description = size + " Poster";
+			String[] nameSplit = name.split(",");
+			String last = nameSplit[nameSplit.length - 1];
+			if (last.contains("Printed on watercolor paper")) {
+				description = size;
+			}
+			if (size.equals("Greet")) {
+				description = "Greeting Card";
+			}
+		}
+
+		if (description.equals("Canvas")) {
+			variations = variations.replace("&quot;", "");
+			variations = variations.replace(" ", "");
+			String size = "Size Not Found";
+			if (variations.length() > 9) {
+				size = variations.substring(5, 10);
+			}
+			description = size + " Canvas";
+		}
+		return description;
+	}
+
+	public boolean isArtItem() {
+		if (keyWord == null)
+			return false;
+		return (keyWord.equals("Map") || keyWord.equals("Art") || keyWord.equals("Canvas"));
+	}
+
+	public String getPosterSize() {
+		String size = "Size Not Found";
+		if (variations.length() > 9) {
+			size = variations.substring(5, 10);
+		}
+		return size;
 	}
 
 	public String getCategory() throws BadItemNameException {
@@ -136,6 +160,10 @@ public class InputItem {
 
 	public String getSku() {
 		return sku;
+	}
+
+	public String getDate() {
+		return date;
 	}
 
 }

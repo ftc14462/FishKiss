@@ -21,11 +21,15 @@ public class Category {
 			hashmap.put("Art", "Art/Stationary");
 			hashmap.put("Towel", "Towel");
 			hashmap.put("Hat", "Baby");
+			hashmap.put("Bib", "Baby");
 			hashmap.put("Headband", "Baby");
 			hashmap.put("One-Piece", "Baby");
 			hashmap.put("Card", "Art/Stationary");
 			hashmap.put("Tumbler", "Drinkware");
 			hashmap.put("Blanket", "Baby");
+			hashmap.put("Platter", "Plateware");
+			hashmap.put("Bowl", "Plateware");
+			hashmap.put("Plate", "Plateware");
 		}
 //		String category="Not found";
 		String category = hashmap.get(short_description);

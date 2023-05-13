@@ -14,7 +14,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.spi.FileTypeDetector;
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -43,6 +46,9 @@ public class FishKissFileConverter {
 	protected static boolean outputSelected;
 	private static ArrayList<InputItem> inputItems;
 	private static JComboBox inputFileTypeComboBox;
+	private static final String[] InputFileTypeStrings = { "Etsy CSV", "Shopify CSV", "Amazon TXT" };
+	private static final String[] MONTHS = { "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT",
+			"NOV", "DEC" };
 
 	public static void main(String[] args) {
 		JFrame fkwindow = new JFrame("Fish Kiss File Converter");
@@ -83,6 +89,8 @@ public class FishKissFileConverter {
 					inputTextField.setText(dirString + filename);
 					inputFile = new File(dirString + filename);
 					inputSelected = true;
+					autoSelectFiletype();
+					autoSetOutputFilename();
 					checkOK();
 				}
 			}
@@ -90,12 +98,11 @@ public class FishKissFileConverter {
 
 		JPanel inputFileTypePanel = new JPanel();
 		inputFileTypePanel.add(new JLabel("Input File Type: "));
-		String[] inputFileTypeStrings = { "CSV From Etsy" };
-		inputFileTypeComboBox = new JComboBox<>(inputFileTypeStrings);
+		inputFileTypeComboBox = new JComboBox<>(InputFileTypeStrings);
 		inputFileTypePanel.add(inputFileTypeComboBox);
 
-		inputPanel.add(inputFileTypePanel, BorderLayout.NORTH);
-		inputPanel.add(inputFilenamePanel, BorderLayout.SOUTH);
+		inputPanel.add(inputFileTypePanel, BorderLayout.CENTER);
+		inputPanel.add(inputFilenamePanel, BorderLayout.NORTH);
 
 		JPanel outputPanel = new JPanel();
 		outputPanel.setLayout(new BorderLayout());
@@ -106,6 +113,7 @@ public class FishKissFileConverter {
 		outputPanel.add(outputTextField, BorderLayout.CENTER);
 		outputBrowseButton = new JButton("Output...", createImageIcon("images/Save16.gif"));
 		outputPanel.add(outputBrowseButton, BorderLayout.EAST);
+		inputPanel.add(outputPanel, BorderLayout.SOUTH);
 
 		outputBrowseButton.addActionListener(new ActionListener() {
 			@Override
@@ -120,6 +128,9 @@ public class FishKissFileConverter {
 				FileDialog fd = new FileDialog(fkwindow, "Choose output", FileDialog.SAVE);
 				fd.setVisible(true);
 				String filename = fd.getFile();
+				if (filename == null) {
+					return;
+				}
 				if (!filename.contains(".csv")) {
 					filename = filename + ".csv";
 				}
@@ -145,8 +156,11 @@ public class FishKissFileConverter {
 					readInputFile();
 					writeOutputFile();
 				} catch (Exception e) {
-					JOptionPane.showMessageDialog(fkwindow, "Error: " + e.getMessage(), "CSV Conversion Error",
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(fkwindow,
+							"<html><body><p style='width: 200px;'>Error: " + e.getMessage()
+									+ "Did you select the correct input file type?</p></body></html>",
+							"CSV Conversion Error", JOptionPane.ERROR_MESSAGE);
+					return;
 				}
 				JOptionPane.showMessageDialog(fkwindow, "Succesfully wrote output file: " + outputFile.getName(),
 						"CSV Conversion Success", JOptionPane.PLAIN_MESSAGE);
@@ -154,11 +168,69 @@ public class FishKissFileConverter {
 		});
 
 		fkwindow.add(inputPanel, BorderLayout.NORTH);
-		fkwindow.add(outputPanel, BorderLayout.CENTER);
+//		fkwindow.add(outputPanel, BorderLayout.CENTER);
 		fkwindow.add(okPanel, BorderLayout.SOUTH);
 
 		fkwindow.pack();
 		fkwindow.setVisible(true);
+	}
+
+	protected static void autoSetOutputFilename() {
+		String filetype = inputFileTypeComboBox.getSelectedItem().toString();
+		String filenameString = inputFile.getName();
+		try {
+			if (filetype.contains("Etsy")) {
+				String date = filenameString.replace("EtsySoldOrderItems", "");
+				date = date.split("\\.")[0];
+//				date=date.split("\\-")[1] + "/1/" + date.split("\\-")[0];
+//				Date d = DateFormat.getInstance().parse(date);
+//				date = new Date(date).toGMTString();
+				String monthString = date.split("\\-")[1];
+				String yearString = date.split("\\-")[0];
+				int month = Integer.parseInt(monthString);
+				String mm = MONTHS[month - 1];
+//				Date date2=new Date(Integer.parseInt(yearString),Integer.parseInt(monthString),1);
+				String outfilenameString = mm + "_" + yearString + "_Etsy_Sales.csv";
+				outputFile = new File(inputFile.getParent() + "\\" + outfilenameString);
+				outputTextField.setText(outputFile.getAbsolutePath());
+				outputSelected = true;
+			} else if (filetype.contains("Amazon")) { // amazon
+				outputFile = new File(inputFile.getParent() + "\\" + "amazon.csv");
+				outputTextField.setText(outputFile.getAbsolutePath());
+				outputSelected = false; // no clues about date from amazon filename
+			} else { // shopify
+				String date = filenameString.replace("sales_", "");
+				date = date.split("_")[0];
+//				date=date.split("\\-")[1] + "/1/" + date.split("\\-")[0];
+//				Date d = DateFormat.getInstance().parse(date);
+//				date = new Date(date).toGMTString();
+				String monthString = date.split("\\-")[1];
+				String yearString = date.split("\\-")[0];
+				int month = Integer.parseInt(monthString);
+				String mm = MONTHS[month - 1];
+//				Date date2=new Date(Integer.parseInt(yearString),Integer.parseInt(monthString),1);
+				String outfilenameString = mm + "_" + yearString + "_Shopify_Sales.csv";
+				outputFile = new File(inputFile.getParent() + "\\" + outfilenameString);
+				outputTextField.setText(outputFile.getAbsolutePath());
+				outputSelected = true;
+			}
+		} catch (Exception e) {
+			System.out.print("bad stuff");
+		}
+	}
+
+	protected static void autoSelectFiletype() {
+		if (inputFile == null) {
+			return;
+		}
+		String filename = inputFile.getName();
+		if (filename.toLowerCase().contains("etsy")) {
+			inputFileTypeComboBox.setSelectedIndex(0);
+		} else if (filename.toLowerCase().contains("txt")) {
+			inputFileTypeComboBox.setSelectedIndex(2);
+		} else {
+			inputFileTypeComboBox.setSelectedIndex(1);
+		}
 	}
 
 	protected static void writeOutputFile() throws BadItemNameException {
@@ -170,7 +242,7 @@ public class FishKissFileConverter {
 
 			for (InputItem item : inputItems) {
 				String line = "";
-				line += item.date + ",";
+				line += item.getDate() + ",";
 				String state = item.getState();
 				line += state + ",";
 				line += item.getSku() + ",";
@@ -199,12 +271,32 @@ public class FishKissFileConverter {
 			BufferedReader reader = new BufferedReader(new FileReader(inputFile));
 
 			inputItems = new ArrayList<InputItem>();
-			final CSVParser parser = new CSVParser(reader, CSVFormat.EXCEL.withHeader());
-			for (final CSVRecord record : parser) {
-				InputItem ii = new EtsyInputItem(record);
-				inputItems.add(ii);
+
+			String inputFileTypeString = inputFileTypeComboBox.getSelectedItem().toString();
+
+			if (inputFileTypeString.contains("Etsy")) {
+				final CSVParser parser = new CSVParser(reader, CSVFormat.EXCEL.withHeader());
+				for (final CSVRecord record : parser) {
+					InputItem ii = new EtsyInputItem(record);
+					inputItems.add(ii);
+				}
+				parser.close();
+			} else if (inputFileTypeString.contains("Shopify")) {
+				final CSVParser parser = new CSVParser(reader, CSVFormat.EXCEL.withHeader());
+				for (final CSVRecord record : parser) {
+					InputItem ii = new ShopifyInputItem(record);
+					inputItems.add(ii);
+				}
+				parser.close();
+			} else {
+				final CSVParser parser = new CSVParser(reader, CSVFormat.EXCEL.withDelimiter('\t').withHeader());
+				for (final CSVRecord record : parser) {
+					InputItem ii = new AmazonInputItem(record);
+					inputItems.add(ii);
+				}
+				parser.close();
 			}
-			parser.close();
+
 			reader.close();
 
 		} catch (IOException e) {

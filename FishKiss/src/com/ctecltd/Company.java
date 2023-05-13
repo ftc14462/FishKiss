@@ -21,11 +21,15 @@ public class Company {
 			hashmap.put("Art", "Jondo");
 			hashmap.put("Towel", "Fish Kiss");
 			hashmap.put("Hat", "Fish Kiss");
+			hashmap.put("Bib", "Fish Kiss");
 			hashmap.put("Headband", "Fish Kiss");
 			hashmap.put("One-Piece", "Fish Kiss");
 			hashmap.put("Card", "Fish Kiss");
 			hashmap.put("Tumbler", "Dubow");
 			hashmap.put("Blanket", "Fish Kiss");
+			hashmap.put("Platter", "Decoplate");
+			hashmap.put("Bowl", "Decoplate");
+			hashmap.put("Plate", "Decoplate");
 		}
 //		String category="Not found";
 		String company = hashmap.get(short_description);
